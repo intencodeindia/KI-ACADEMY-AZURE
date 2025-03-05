@@ -1,0 +1,34 @@
+todo:
+
+backend:
+
+edit course approval by admin (API Required)
+master admin (discuss)
+social login
+payment date is null in transactions
+
+discuss:
+
+course completed percentage
+
+my-end:
+
+ui changes
+facebook login
+
+STRIPE_API_KEY=sk_test_51MWsbSSI57XVj5p7vLRNnD3Z957Mu1pbgnWnIsfysZKG5tINPaXrcBNmDiLycG2GXFf2UGi6Pl1LVf1fmZWjsSzK00dq0vvC4H
+STRIPE_PUBLIC_KEY=pk_test_51MWsbSSI57XVj5p7zzra9QSnSh8gAwdC7QD74hD2QhSlgPWir99Yjjn2XeYMMs9jLZvJGVoqOL8M5xKa5Ecnjzq000gXgRNCKb
+
+free trial for 15 days
+49$ per month ===> 10 courses
+499$ per year ===> 50 courses
+4th unlimited courses
+
+aibizzhub@gmail.com
+AibizzHub123
+
+homepage text animation
+subscriptions on admin
+free trial in subscriptions
+subscribe validations
+trial

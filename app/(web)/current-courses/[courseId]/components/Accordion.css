@@ -1,0 +1,42 @@
+.accordion-button:not(.collapsed) {
+    background-color: #f8f9fa;
+    color: var(--bs-primary);
+    box-shadow: none;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0,0,0,.125);
+}
+
+.lecture-item:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+.lecture-item:last-child {
+    border-bottom: none !important;
+}
+
+.learning-objectives {
+    border-left: 4px solid var(--bs-primary);
+}
+
+.content-wrapper {
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.unit-meta {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.accordion-button::after {
+    background-color: var(--bs-primary);
+    border-radius: 50%;
+    padding: 0.75rem;
+    background-position: center;
+    background-size: 10px;
+} 
