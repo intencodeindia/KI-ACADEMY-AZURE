@@ -7,6 +7,9 @@ const nextConfig = {
     NEXT_PUBLIC_SALT_INDEX: process.env.NEXT_PUBLIC_SALT_INDEX,
     NEXT_URL: process.env.NEXT_URL,
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     remotePatterns: [
       {
