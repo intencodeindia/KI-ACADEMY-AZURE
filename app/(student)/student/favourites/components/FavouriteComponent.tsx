@@ -7,15 +7,9 @@ import { Typography } from '@mui/material'
 
 export const EmptyFavourites = () => {
     return (
-        <div className="container-fluid py-5">
-            <div className="row justify-content-center">
-                <div className="col-12 text-center">
-                    <IoHeart style={{ fontSize: "120px" }} className="mb-4" />
-                    <Typography variant="h4" component="h2" className="fw-bold">
-                        No Items in Favourites
-                    </Typography>
-                </div>
-            </div>
+        <div className="w-full h-[40vh] flex flex-col justify-end items-center gap-4">
+            <IoHeart style={{ fontSize: "120px" }} />
+            <p className="w-full text-center text-2xl font-bold">No Items</p>
         </div>
     );
 };
@@ -35,11 +29,9 @@ const FavouriteComponent: React.FC<FavouriteComponentProps> = ({
 }) => {
     if (is_loading) {
         return (
-            <div className="row g-4">
-                {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="col-12 col-sm-6 col-lg-3">
-                        <CourseCardSkeleton />
-                    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {[1, 2, 3].map((i) => (
+                    <CourseCardSkeleton key={i} />
                 ))}
             </div>
         );
@@ -50,21 +42,20 @@ const FavouriteComponent: React.FC<FavouriteComponentProps> = ({
     }
 
     return (
-        <div className="row g-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {data.map((course, index) => (
-                <div key={course.course_id || index} className="col-12 col-sm-6 col-lg-3">
-                    <CourseCard
-                        course={{
-                            ...course,
-                            display_price: course.display_price || course.course_price,
-                            currency: course.currency || course.display_currency
-                        }}
-                        options={{
-                            is_favourite: true,
-                            onRefresh: get_data
-                        }}
-                    />
-                </div>
+                <CourseCard
+                    key={course.course_id || index}
+                    course={{
+                        ...course,
+                        display_price: course.display_price || course.course_price,
+                        currency: course.currency || course.display_currency
+                    }}
+                    options={{
+                        is_favourite: true,
+                        onRefresh: get_data
+                    }}
+                />
             ))}
         </div>
     );

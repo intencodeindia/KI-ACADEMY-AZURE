@@ -117,30 +117,20 @@ const Main = () => {
                 fun={alertData?.fun}
                 isLoading={is_loading}
             />
-            <div className="container-fluid py-4">
-                <div className="row mb-4">
-                    <div className="col-12 d-flex justify-content-between align-items-center">
-                        <Typography variant="h5" component="h3">Favourites</Typography>
-                        {favourite_courses?.length > 0 && (
+            <div className='p-4 flex flex-col justify-start items-start gap-4'>
+                <div className='w-full flex justify-between items-center gap-4'>
+                    <Typography variant="h5" component="h3" sx={{ marginBottom: "8px" }}>Favourites</Typography>
+                    {
+                        favourite_courses?.length ?
                             <Button
-                                className="d-flex align-items-center"
-                                onClick={clear_favourites_confirmation}
-                                color="secondary"
-                                variant="contained"
-                                disabled={is_loading}
-                            >
-                                <DeleteIcon sx={{ fontSize: "16px", marginRight: "8px" }} />
-                                Clear Favourites
-                            </Button>
-                        )}
-                    </div>
+                                sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "40px" }}
+                                onClick={clear_favourites_confirmation} color="secondary" variant="contained"
+                                disabled={is_loading || !favourite_courses?.length}
+                            > <DeleteIcon sx={{ fontSize: "16px", marginRight: "8px" }} /> <span className='mt-[3px]'>Clear Favourites</span>
+                            </Button> : null
+                    }
                 </div>
-                <FavouriteComponent 
-                    data={favourite_courses} 
-                    get_data={get_favourite_courses} 
-                    is_loading={is_loading} 
-                    set_is_loading={set_is_loading} 
-                />
+                <FavouriteComponent data={favourite_courses} get_data={get_favourite_courses} is_loading={is_loading} set_is_loading={set_is_loading} />
             </div>
         </>
     )

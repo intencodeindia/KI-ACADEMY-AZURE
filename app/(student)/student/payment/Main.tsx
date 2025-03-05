@@ -35,7 +35,7 @@ const Main = () => {
     const [payment_secret, set_payment_secret] = useState("")
     const [show_popup, set_show_popup] = useState(false)
     const [billing_data, set_billing_data] = useState<any>(null)
-    const [show_stripe_form, set_show_stripe_form] = useState(false)
+    const [phonepe_redirect_url, set_phonepe_redirect_url] = useState("")
 
     useEffect(() => {
         get_cart()
@@ -300,44 +300,48 @@ const Main = () => {
         }
     };
 
-    const handleStripePayment = () => {
-        if (!billing_data) {
-            set_show_popup(true);
-            return;
-        }
-        set_show_stripe_form(true);
-    };
-
     const handlePhonePePayment = async () => {
-        if (!billing_data) {
-            set_show_popup(true);
-            return;
-        }
-        
         try {
             set_is_loading(true);
-            const response = await initiatePhonePePayment({
-                amount: totalPrice,
+
+            // Validate cart and user data before proceeding
+            if (!cart?.length || !currentUser?.user_id) {
+                throw new Error('Invalid cart or user data');
+            }
+
+            const result = await initiatePhonePePayment({
                 userId: currentUser?.user_id,
-                email: currentUser?.email,
-                phoneNumber: currentUser?.phone_number || "",
-                name: `${currentUser?.first_name} ${currentUser?.last_name}`,
-                address: billing_data?.address,
-                city: billing_data?.city,
-                state: billing_data?.state,
-                postalCode: billing_data?.postal_code,
-                country: billing_data?.country,
+                amount: totalPrice,
+                courses: cart.map(course => ({
+                    id: course.course_id,
+                    title: course.course_title,
+                    price: course.display_price
+                })),
+                phoneNumber: currentUser?.phone || ''
             });
 
-            if (response?.data?.success) {
-                window.location.href = response.data.redirectUrl;
+            if (result.success && result.redirectUrl) {
+                // Store transaction details in localStorage with additional metadata
+                localStorage.setItem('phonepe_transaction', JSON.stringify({
+                    transactionId: result.transactionId,
+                    amount: totalPrice,
+                    courses: cart.map(course => ({
+                        id: course.course_id,
+                        title: course.course_title,
+                        price: course.display_price
+                    })),
+                    timestamp: new Date().toISOString()
+                }));
+
+                // Redirect to PhonePe payment page
+                window.location.href = result.redirectUrl;
             } else {
-                set_error_message("Failed to initiate PhonePe payment");
-                setTimeout(() => set_error_message(null), 3000);
+                throw new Error(result.error || 'Failed to initiate payment');
             }
-        } catch (error) {
-            console.error('PhonePe payment error:', error);
-            set_error_message("Failed to initiate payment");
+
+        } catch (error: any) {
+            console.error("Error initiating PhonePe payment:", error);
+            set_error_message(error.message || "Failed to initiate payment");
             setTimeout(() => set_error_message(null), 3000);
         } finally {
             set_is_loading(false);
@@ -352,36 +356,27 @@ const Main = () => {
             <CustomDialogue
                 open={show_popup}
                 setOpen={set_show_popup}
-                title="Billing Information"
-                description="Please provide your billing information to proceed with the payment."
+                title="Billing Address"
             >
                 <BillingForm
-                    data={billing_data}
-                    setData={set_billing_data}
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        set_show_popup(false);
-                        if (show_stripe_form) {
-                            handleStripePayment();
-                        } else {
-                            handlePhonePePayment();
-                        }
-                    }}
+                    billing_data={billing_data}
+                    set_billing_data={set_billing_data}
+                    get_client_secret={get_client_secret}
+                    loading={is_loading}
+                    set_loading={set_is_loading}
                 />
             </CustomDialogue>
 
             <FullScreenDialog
-                open={show_stripe_form && !!payment_secret}
-                setOpen={set_show_stripe_form}
-                title="Complete Payment"
+                open={payment_secret}
+                onClose={() => set_payment_secret("")}
+                headerTitle="Payment Gateway"
             >
-                <StripeProvider stripePromise={stripePromise}>
-                    <PayCard
-                        clientSecret={payment_secret}
-                        appearance={appearance}
-                        return_url={window.location.href}
-                    />
-                </StripeProvider>
+                {payment_secret ?
+                    <StripeProvider stripePromise={stripePromise} options={{ appearance, clientSecret: payment_secret }}>
+                        <PayCard payment_secret={payment_secret} complete_payment={complete_payment} />
+                    </StripeProvider> : "loading..."
+                }
             </FullScreenDialog>
 
             <ConfirmAlertMUI
@@ -439,15 +434,7 @@ const Main = () => {
                         </div>
                         : null
                 }
-                <CartComponent 
-                    data={cart} 
-                    get_data={get_cart} 
-                    is_loading={is_loading} 
-                    set_is_loading={set_is_loading}
-                    onStripePayment={handleStripePayment}
-                    onPhonePePayment={handlePhonePePayment}
-                    totalAmount={totalPrice}
-                />
+                <CartComponent data={cart} get_data={get_cart} is_loading={is_loading} set_is_loading={set_is_loading} />
             </div>
         </>
     )
